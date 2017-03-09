@@ -1,0 +1,123 @@
+<html>
+    <header>
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script> 
+        <script src="https://js.arcgis.com/4.2/"></script>
+        <link rel="stylesheet" href="https://js.arcgis.com/4.2/esri/css/main.css"> 
+        <script>
+            require([
+                "esri/config",
+                "esri/layers/OpenStreetMapLayer",
+                "esri/Map",
+                "esri/views/MapView",
+                "dojo/dom",
+                "esri/layers/FeatureLayer",
+                "esri/renderers/UniqueValueRenderer",
+                "esri/renderers/SimpleRenderer",
+                "esri/portal/PortalItem",
+                "esri/symbols/SimpleMarkerSymbol",
+                "esri/Color",
+                "esri/widgets/Legend",
+                "dojo/domReady!"
+            ], function(
+                esriConfig,
+                OpenStreetMapLayer,
+                Map,
+                MapView,
+                dom,
+                FeatureLayer,
+                UniqueValueRenderer,
+                SimpleRenderer,
+                PortalItem,
+                SimpleMarkerSymbol,
+                Color,
+                Legend) {
+
+                    esriConfig.request.corsEnabledServers.push("a.tile.openstreetmap.org",
+                      "b.tile.openstreetmap.org", "c.tile.openstreetmap.org");  
+
+                    var featureLayer = new FeatureLayer({
+                        portalItem: {
+                            id: "b4a40f7f91be48588caf93f11ecc0341"
+                        },
+                        popupTemplate: {
+                            title: "Properties",
+                            view: "MapView",
+                            content: [{
+                                type: "fields",
+                                fieldInfos: [{
+                                    fieldName: "Issue"
+                                }]
+                            }]
+                        }
+                    });
+
+                    uniqueValueList = ["Ponding","Blocked Sidewalk","Excessive Cross-Slope", "Excessive Slope", "Missing Curb Cut","Missing Sidewalk Slab", "Trip Hazard", "Unevenness", "Other"]
+                    uniqueColor = ["green","red","purple","orange","yellow","#00FF2A","#FB00FF","#0004FF","peru"]
+
+                    concUnique = []
+
+                    for (i = 0, len = uniqueValueList.length; i < len; i++){
+                        concUnique.push({
+                            value: uniqueValueList[i],
+                            symbol: new SimpleMarkerSymbol({
+                                label: uniqueValueList[i],
+                                size: 7,
+                                color: uniqueColor[i],
+                                style: "solid",
+                                outline: {
+                                    color: "white",
+                                    width: 1
+                                }
+                            })
+                        })
+                    }
+
+                    
+                    featureLayer.renderer = new UniqueValueRenderer({
+                        defaultLabel: "default",
+                        defaultSymbol: new SimpleMarkerSymbol({
+                            size: 7,
+                            color: "blue",
+                            style: "solid",
+                            outline: {
+                                color: "white", 
+                                width: 1
+                            }
+                        }),
+                        field: "Issue",
+                        uniqueValueInfos: concUnique
+                    });
+                           
+                    var osmLayer = new OpenStreetMapLayer();
+
+                    var map = new Map({
+                        ground: "world-elevation"
+                    }); 
+                    
+                    var view = new MapView({
+                        map: map,
+                        container: "mapContainer",
+                        center: [-80.541124, 43.470775],
+                        zoom: 15
+                    });
+
+  
+                    map.add(osmLayer);
+                    map.add(featureLayer);
+                   
+
+                }); 
+        </script>
+    </header>
+    <body>
+	    <center>
+	    	<div style="height:auto;width:100%""><h2>Sidewalk Hazards near Waterloo Campus</h2></div>
+	        <div id="mapContainer" style="height:80%;width:90%;border:1px solid black"></div>
+	    
+	        <div style="height:10%;width:90%;text-align:right">
+	            <p>Created by: GEOG487 Group 10</p>
+	            <p>Sources: esri, OpenStreetMap</p>
+	        </div>
+	    </center>
+    </body>
+</html>
