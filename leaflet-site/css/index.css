@@ -1,0 +1,17 @@
+#mapid {
+	height: 80%;
+	width: 90%;
+	border: solid 1px black;
+}
+
+#blurb {
+	text-align: right;
+	height: 10%;
+	width: 90%;
+}
+
+#title {
+	height: auto;
+	width: 90%;
+	text-align: center;
+}
